@@ -1,0 +1,89 @@
+'LANGUAGE=ENU
+'SERVERNAME=10.253.88.32
+Public Sub Main()
+
+'## cvs_cmd_begin
+'## ID = 2001
+'## Description = "Report: Historical: Designer: VIPMK VDN Daily - Residential CC - All Res VDNs: Export Data"
+'## Parameters.Add "Report: Historical: Designer: VIPMK VDN Daily - Residential CC - All Res VDNs: Export Data","_Desc"
+'## Parameters.Add "Reports","_Catalog"
+'## Parameters.Add "2","_Action"
+'## Parameters.Add "1","_Quit"
+'## Parameters.Add "Historical\Designer\VIPMK VDN Daily - Residential CC - All Res VDNs","_Report"
+'## Parameters.Add "1","_ACD"
+'## Parameters.Add "45","_Top"
+'## Parameters.Add "45","_Left"
+'## Parameters.Add "25125","_Width"
+'## Parameters.Add "15690","_Height"
+'## Parameters.Add "default","_TimeZone"
+'## Parameters.Add "The report Historical\Designer\VIPMK VDN Daily - Residential CC - All Res VDNs was not found on ACD 1.","_ReportNotFound"
+'## Parameters.Add "*","_BeginProperties"
+'## Parameters.Add "83600-83622;83637-83647;83653-83665;83671-83678;83685-83688;83693-83694","VDNs"
+'## Parameters.Add "11/11/2021","Dates"
+'## Parameters.Add "1","ACDs"
+'## Parameters.Add "*","_EndProperties"
+'## Parameters.Add "*","_BeginViews"
+'## Parameters.Add "*","_EndViews"
+'## Parameters.Add "C:\Users\maksim.miteski\github\Python-Proekti---A1---MakAta\CMS_skripti_output_2\Residential CC -All res VDNs.acsauto","_Output"
+'## Parameters.Add "9","_FldSep"
+'## Parameters.Add "0","_TextDelim"
+'## Parameters.Add "False","_NullToZero"
+'## Parameters.Add "True","_Labels"
+'## Parameters.Add "True","_DurSecs"
+
+   On Error Resume Next
+
+   cvsSrv.Reports.ACD = 1
+   Set Info = cvsSrv.Reports.Reports("Historical\Designer\VIPMK VDN Daily - Residential CC - All Res VDNs")
+
+   If Info Is Nothing Then
+	  If cvsSrv.Interactive Then
+		  MsgBox "The report Historical\Designer\VIPMK VDN Daily - Residential CC - All Res VDNs was not found on ACD 1.", vbCritical Or vbOKOnly, "Avaya CMS Supervisor"
+	  Else
+	   	  Set Log = CreateObject("ACSERR.cvsLog")
+		  Log.AutoLogWrite "The report Historical\Designer\VIPMK VDN Daily - Residential CC - All Res VDNs was not found on ACD 1."
+		  Set Log = Nothing
+	  End If
+   Else
+
+	   b = cvsSrv.Reports.CreateReport(Info,Rep)
+	   If b Then
+
+	      Rep.Window.Top = 45
+	      Rep.Window.Left = 45
+	      Rep.Window.Width = 25125
+	      Rep.Window.Height = 15690
+
+
+                        Rep.TimeZone = "default"
+
+
+
+	      Rep.SetProperty "VDNs","83600-83622;83637-83647;83653-83665;83671-83678;83685-83688;83693-83694"
+
+	      Rep.SetProperty "Dates","11/11/2021"
+
+	      Rep.SetProperty "ACDs","1"
+
+
+
+
+	      b = Rep.ExportData("C:\Users\atanas.janeshliev\Documents\TEST\CMS_skripti_output\RSCC\RSCC_11_11_2021.csv", 44, 0, False, True, False)
+
+
+
+
+
+	      Rep.Quit
+
+
+
+              If Not cvsSrv.Interactive Then cvsSrv.ActiveTasks.Remove Rep.TaskID
+	      Set Rep = Nothing
+	   End If
+
+   End If
+   Set Info = Nothing
+'## cvs_cmd_end
+
+End Sub
